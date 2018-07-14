@@ -1,5 +1,12 @@
 var CACHE_NAME = 'tinku-v1';
-var urlsToCache = ['/', '/css/styles.css', '/css/mediaquery.css','/js/dbhelper.js','/js/restaurant_info.js', '/js/main.js','https://fonts.googleapis.com/css?family=Lato:300,400', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js'];
+var urlsToCache = ['/', '/css/styles.css',
+ '/css/mediaquery.css',
+ '/js/dbhelper.js',
+ '/js/restaurant_info.js',
+   'js/sw_registration.js',
+   'node_modules/idb/lib/idb.js'
+   /*'/js/main.js','https://fonts.googleapis.com/css?family=Lato:300,400',
+   'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js',*/];
 self.addEventListener('install', function(event) {
     // Perform install steps
     event.waitUntil(caches.open(CACHE_NAME).then(function(cache) {

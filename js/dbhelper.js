@@ -21,27 +21,65 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    const port = 8000 // Change this to your server port
-    return `http://localhost:${port}/data/restaurants.json`;
+   /* const http = require('http')
+http.createServer((req, res)=> {
+    res.writeHead(200, {
+        "Location": "https://" + req.headers['host'] + req.url
+    })
+    res.end()
+}).listen(8000);*/
+    const port = 1337 // Change this to your server port
+    return `http://localhost:${port}`;
+  }
+
+  static get dbPromise() {
+    if (!navigator.serviceWorker) {
+      return Promise.resolve();
+    } else {
+      return idb.open('restaurants', 1, function (upgradeDb) {
+        upgradeDb.createObjectStore('all-restaurants', { keyPath: 'id' });
+      });
+    }
   }
 
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+    DBHelper.dbPromise.then(db => {
+      if (!db) return;
+      // 1. Look for restaurants in IDB
+      const tx = db.transaction('all-restaurants');
+      const store = tx.objectStore('all-restaurants');
+      store.getAll().then(results => {
+        if (results.length === 0) {
+          // No restaurants in IDB found
+          // 2. Fetch restaurants from network
+          fetch(`${DBHelper.DATABASE_URL}/restaurants`)
+          .then(response => {
+            return response.json();
+          })
+          .then(restaurants => {
+            // Restaurants fetched from network
+            // 3. Put fetched restaurants into IDB
+            const tx = db.transaction('all-restaurants', 'readwrite');
+            const store = tx.objectStore('all-restaurants');
+            restaurants.forEach(restaurant => {
+              store.put(restaurant);
+            })
+            callback(null, restaurants);
+          })
+          .catch(error => {
+            // Unable to fetch from network
+            callback(error, null);
+          });
+        } else {
+          // Restaurants found in IDB
+          callback(null, results);
+        }
+      })
+      
+    });
   }
 
   /**
@@ -156,7 +194,7 @@ class DBHelper {
    * Restaurant page URL.
    */
   static urlForRestaurant(restaurant) {
-    return (`./restaurant.html?id=${restaurant.id}`);
+    return (`/restaurant.html?id=${restaurant.id}`);
   }
 
   /**

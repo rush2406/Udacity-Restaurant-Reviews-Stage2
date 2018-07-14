@@ -1,0 +1,16 @@
+{
+  "name": "Udacity-Restaurant-Reviews-Stage1",
+  "version": "1.0.0",
+  "description": "Restaurant Reviews",
+  "main": "",
+  "scripts": {
+    "start": "python2 -m http.server 8000"
+  },
+  "author": "",
+  "license": "",
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+    "idb": "^2.1.0"
+  }
+}
