@@ -3,7 +3,7 @@
 #### _Three Stage Course Material Project - Restaurant Reviews_
 
 ## Project Overview: Stage 2
-Fork and clone the [server] (https://github.com/udacity/mws-restaurant-stage-2). Change the data source for your restaurant requests to pull JSON from the server, parse the response and use the response to generate the site UI.
+Fork and clone the server - https://github.com/udacity/mws-restaurant-stage-2. Change the data source for your restaurant requests to pull JSON from the server, parse the response and use the response to generate the site UI.
 Cache the JSON responses for offline use by using the IndexedDB API.
 Follow the recommendations provided by Lighthouse to achieve the required performance targets.
 Submit your project code for review.
